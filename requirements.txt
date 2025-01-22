@@ -1,0 +1,12 @@
+argparse
+json
+numpy
+os
+subprocess
+wave
+logging
+datetime
+pathlib
+tqdm
+transformers
+vosk
