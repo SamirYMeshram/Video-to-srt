@@ -2,123 +2,213 @@
 A Python tool for automatically generating subtitles (SRT format) from video files using speech recognition (Vosk). It includes features like audio enhancement (FFmpeg), punctuation restoration (Transformers), and subtitle segmentation optimization for better readability.
 
 
+---
+
+# **Advanced Video to SRT Subtitle Generator**
+
+This Python-based tool enables automatic subtitle generation from video files in the **SRT** (SubRip Subtitle) format. It combines **Vosk** for accurate speech-to-text transcription, **FFmpeg** for high-quality audio enhancement, and **Hugging Face's Transformers** for punctuation restoration. The tool optimizes subtitle segments to fit readability criteria like duration, character count, and line count. 
+
+Whether you're generating subtitles for personal use or adding captions to videos for accessibility, this tool is designed for high-quality, customizable subtitle creation.
 
 ---
 
-# Advanced Video to SRT Subtitle Generator
-
-This Python tool automates the process of generating subtitles (SRT format) from video files. It leverages **Vosk** for speech recognition, uses **FFmpeg** for audio enhancement, and integrates **Hugging Face's Transformers** for punctuation restoration. The tool optimizes subtitle segmentation based on duration, character limits, and line count, ensuring a smooth viewing experience.
-
-### Features:
-- **Speech Recognition**: Transcribes speech from video files using the Vosk ASR model.
-- **Audio Enhancement**: Improves audio quality with noise reduction, normalization, and compression via FFmpeg.
-- **Punctuation Restoration**: Restores punctuation to transcriptions using a pre-trained model from Hugging Face’s Transformers library.
-- **Subtitle Optimization**: Automatically adjusts subtitle segments based on duration, character count, and line limits.
-- **Debug Mode**: Enables verbose logging for troubleshooting.
-- **Speaker Diarization**: Placeholder for future speaker recognition functionality.
+## **Key Features**
+- **Speech Recognition**: Converts audio from video files into accurate text using the **Vosk** ASR (Automatic Speech Recognition) system.
+- **Audio Enhancement**: Improves audio quality by applying noise reduction, normalization, and compression filters using **FFmpeg**.
+- **Punctuation Restoration**: Enhances raw transcriptions by automatically restoring punctuation using the **Hugging Face** **Transformers** pipeline.
+- **Subtitle Segmentation**: Automatically segments subtitles based on maximum duration, character count, and line count.
+- **Debug Mode**: Provides detailed logging for easy troubleshooting and debugging.
+- **Speaker Diarization**: Placeholder for future support to identify different speakers (currently not implemented).
+- **Cross-platform Support**: Works on Windows, Linux, and macOS.
 
 ---
 
-## Installation
-
-### Prerequisites:
-1. **Python 3.x** (recommended version: 3.7+)
-2. **FFmpeg** installed on your system.
-
-   - [FFmpeg Installation Guide](https://ffmpeg.org/download.html)
-
-### Install Dependencies:
-Clone this repository and install the required Python packages using `pip`:
-
-```bash
-git clone https://github.com/SamirYMeshram/advanced-video-to-srt-generator.git
-cd advanced-video-to-srt-generator
-pip install -r requirements.txt
-```
-
-### Download Vosk Model:
-Download the Vosk ASR model (you can use the `vosk-model-small-en-us-0.15` model or any other compatible model) and place it in your desired directory.
-
-- [Vosk Models](https://alphacephei.com/vosk/models)
+## **Table of Contents**
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Install Dependencies](#install-dependencies)
+  - [Download Vosk Model](#download-vosk-model)
+- [Usage](#usage)
+  - [CLI Usage](#cli-usage)
+  - [Configuration Options](#configuration-options)
+  - [Example Usage](#example-usage)
+- [How It Works](#how-it-works)
+- [Customization](#customization)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
 
 ---
 
-## Usage
+## **Installation**
 
-### Command Line Interface (CLI)
+### **Prerequisites**
+Before running the tool, make sure you have the following installed:
 
-The script can be executed from the command line to process video files or directories containing video files.
+1. **Python 3.7+**  
+   You can download Python from [here](https://www.python.org/downloads/).
+
+2. **FFmpeg**  
+   FFmpeg is required for audio extraction and enhancement. Install FFmpeg according to your operating system:
+
+   - **Windows**: Download from [FFmpeg.org](https://ffmpeg.org/download.html).
+   - **macOS**: Install via Homebrew:
+     ```bash
+     brew install ffmpeg
+     ```
+   - **Linux**: Install using your package manager (e.g., `apt` for Ubuntu):
+     ```bash
+     sudo apt-get install ffmpeg
+     ```
+
+3. **Vosk Model**  
+   You need to download a pre-trained ASR model from Vosk to perform speech-to-text. The smallest and fastest model for English is `vosk-model-small-en-us-0.15`, but there are other models for multiple languages available.
+
+   - Download Vosk models from [here](https://alphacephei.com/vosk/models).
+
+   **Note**: Download and extract the model to a directory on your system. You'll need to specify the model's path in the next steps.
+
+---
+
+### **Install Dependencies**
+After ensuring Python 3.7+ and FFmpeg are installed, clone this repository and install the required Python dependencies.
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/SamirYMeshram/advanced-video-to-srt-generator.git
+   cd advanced-video-to-srt-generator
+   ```
+
+2. Create a virtual environment (recommended):
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use 'venv\Scripts\activate'
+   ```
+
+3. Install the required Python packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Install **FFmpeg** if you haven't already. Refer to the instructions above to install it.
+
+---
+
+### **Download Vosk Model**
+1. Visit the [Vosk Model page](https://alphacephei.com/vosk/models) and download the desired language model (e.g., `vosk-model-small-en-us-0.15`).
+2. Extract the model to a folder, e.g., `/path/to/vosk-model`.
+3. Make a note of the path, as you'll need to reference it in the next steps.
+
+---
+
+## **Usage**
+
+### **CLI Usage**
+The tool can be run from the command line to process video files or directories containing video files. Here’s how to run it:
 
 ```bash
 python generate_subtitles.py --model /path/to/vosk/model --output-dir /path/to/output [video_files_or_directories]
 ```
 
-### Parameters:
-- **`--model`**: Path to the Vosk ASR model directory (required).
-- **`--output-dir`**: Directory to store generated SRT subtitle files (default: `output`).
-- **`--max-duration`**: Maximum duration (in seconds) of each subtitle segment (default: `8.0`).
-- **`--max-chars`**: Maximum number of characters per subtitle line (default: `45`).
-- **`--max-lines`**: Maximum number of lines per subtitle segment (default: `2`).
-- **`--punctuation`**: Enable punctuation restoration (default: disabled).
-- **`--speakers`**: Enable speaker diarization (currently not implemented, placeholder).
-- **`--debug`**: Enable debug logging for detailed error messages (default: disabled).
+#### **Configuration Options**
+- **`--model`**: (Required) Path to the Vosk ASR model directory (e.g., `/path/to/vosk-model`).
+- **`--output-dir`**: (Optional) Directory where the generated subtitle (SRT) files will be saved. Default is `output`.
+- **`--max-duration`**: (Optional) Maximum duration (in seconds) of each subtitle segment. Default is `8.0`.
+- **`--max-chars`**: (Optional) Maximum number of characters per subtitle line. Default is `45`.
+- **`--max-lines`**: (Optional) Maximum number of lines per subtitle segment. Default is `2`.
+- **`--punctuation`**: (Optional) If specified, restores punctuation in transcriptions using a Hugging Face punctuation model.
+- **`--speakers`**: (Optional) Enable speaker diarization (currently a placeholder).
+- **`--debug`**: (Optional) Enables detailed logging for debugging purposes.
 
-### Example:
+#### **Example Usage**
 ```bash
 python generate_subtitles.py --model /path/to/vosk/model --output-dir ./subtitles --punctuation --max-duration 10.0 --debug video1.mp4 video2.mkv
 ```
-
 This command will:
-1. Process `video1.mp4` and `video2.mkv`.
-2. Restore punctuation in transcriptions.
-3. Ensure each subtitle segment is no longer than 10 seconds.
-4. Save subtitles to the `./subtitles` directory.
+- Process `video1.mp4` and `video2.mkv`.
+- Restore punctuation in transcriptions.
+- Ensure each subtitle segment is no longer than 10 seconds.
+- Save subtitles to the `./subtitles` directory.
 
 ---
 
-## How It Works
+## **How It Works**
 
-1. **Extract Audio**: The tool uses `FFmpeg` to extract and enhance the audio from the input video files. Filters like noise reduction, volume normalization, and compression are applied to improve the quality of the audio for better transcription accuracy.
-   
-2. **Speech Transcription**: The audio is transcribed using the **Vosk** ASR model. This model is capable of transcribing audio to text with high accuracy for multiple languages.
+### **Step-by-Step Process**:
 
-3. **Punctuation Restoration**: If enabled, the raw transcription (without punctuation) is processed through a punctuation restoration model provided by **Hugging Face's Transformers** library to enhance the readability of the output.
+1. **Audio Extraction and Enhancement**:
+   The tool uses **FFmpeg** to extract the audio from the video. It then applies filters like:
+   - **Noise Reduction**: Removes background noise.
+   - **Volume Normalization**: Adjusts audio levels to be consistent.
+   - **Compression**: Adjusts dynamic range for better clarity.
 
-4. **Subtitle Optimization**: The transcribed text is divided into subtitle segments. Segments are optimized to ensure they fit within the character and line limits. The duration of each segment is also checked to ensure readability.
+2. **Speech-to-Text Transcription**:
+   The extracted audio is processed by **Vosk** ASR to convert speech to text. The model segments the audio and produces a raw transcript.
 
-5. **SRT Generation**: Finally, the segments are written into a standard **SRT** subtitle file with accurate timestamps and formatted text.
+3. **Punctuation Restoration**:
+   If enabled, the raw transcription (without punctuation) is processed using **Hugging Face Transformers** to add proper punctuation (e.g., periods, commas, question marks).
 
----
+4. **Subtitle Optimization**:
+   Transcribed text is divided into subtitle segments, ensuring that each subtitle meets:
+   - Maximum duration (`max_duration`).
+   - Maximum characters per line (`max_chars`).
+   - Maximum lines per subtitle (`max_lines`).
 
-## Configuration
-
-You can adjust the behavior of the tool by modifying the configuration passed via command-line arguments or by editing the code in the `config` dictionary inside the script.
-
-- **`max_duration`**: Controls the maximum duration for each subtitle segment (in seconds).
-- **`max_chars`**: Defines the maximum number of characters per subtitle line.
-- **`max_lines`**: Limits the maximum number of subtitle lines per segment.
-- **`punctuation`**: Whether to restore punctuation to the transcriptions.
-- **`speaker_diarization`**: Placeholder for enabling speaker identification in the future.
-- **`debug`**: Enables detailed logging for debugging purposes.
-
----
-
-## Troubleshooting
-
-- **Missing FFmpeg**: Ensure FFmpeg is installed on your system and added to the system path.
-- **Vosk Model Not Found**: Make sure the correct model path is specified and the model is downloaded and placed correctly.
-- **Audio Quality**: If the transcription is unclear or inaccurate, check the audio enhancement filters or provide higher-quality audio sources.
+5. **SRT Generation**:
+   Finally, the subtitle segments are written into an **SRT** file with accurate timestamps and properly formatted text.
 
 ---
 
-## Author
+## **Customization**
+
+You can modify the behavior of the tool by changing the following configurations in the script or by passing different command-line arguments:
+- **Punctuation Model**: You can replace the `oliverguhr/fullstop-punctuation-multilang-large` model with any custom punctuation model from Hugging Face.
+- **Audio Filters**: Modify the audio enhancement filters in the `_enhance_audio` method to change how the audio is processed (e.g., applying different noise reduction techniques).
+
+---
+
+## **Troubleshooting**
+
+### Common Issues:
+
+1. **FFmpeg Not Found**:
+   - Ensure that **FFmpeg** is installed and added to your system’s PATH.
+   - Run `ffmpeg -version` in the terminal to confirm it’s properly installed.
+
+2. **Model Not Found**:
+   - Ensure that the path to the **Vosk ASR model** is correct.
+   - Download the model from [Vosk Models](https://alphacephei.com/vosk/models).
+
+3. **Audio Quality Issues**:
+   - If the transcription is unclear or inaccurate, try using a higher-quality audio source or adjusting the **FFmpeg** filters for better noise reduction.
+
+4. **Punctuation Issues**:
+   - If punctuation restoration is not performing as expected, consider using a different Hugging Face model or adjusting parameters such as `num_beams`.
+
+---
+
+## **Contributing**
+
+Contributions are welcome! If you have suggestions or improvements, feel free to:
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes.
+4. Push to the branch (`git push origin feature-branch`).
+5. Open a pull request.
+
+---
+
+## **License**
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## **Author**
 
 **Samir Y. Meshram**  
 GitHub: [SamirYMeshram](https://github.com/SamirYMeshram)  
 Email: [sameerYmeshram@gmail.com](mailto:sameerYmeshram@gmail.com)
 
 ---
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
